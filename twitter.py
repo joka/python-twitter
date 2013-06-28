@@ -2877,11 +2877,13 @@ class Api(object):
   @classmethod
   def _calculate_status_length(cls, status, linksize=19):
     dummy_link_replacement = 'https://-%d-chars%s/' % (linksize, '-'*(linksize - 18))
-    shortened = ' '.join([x if not (x.startswith('http://') or
-                                    x.startswith('https://'))
-                            else
-                                dummy_link_replacement
-                            for x in status.split(' ')])
+    status_parts = []
+    for x in status.split(' '):
+      if not (x.startswith('http://') or x.startswith('https://')):
+        status_parts.append(x)
+      else:
+        status_parts.append(dummy_link_replacement)
+    shortened = ' '.join(status_parts)
     return len(shortened)
 
   def PostUpdate(self, status, in_reply_to_status_id=None, latitude=None, longitude=None, place_id=None, display_coordinates=False, trim_user=False):
